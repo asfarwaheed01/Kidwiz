@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+html,
+body,
+#root,
+.app,
+.content {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app {
+  display: flex;
+  position: relative;
+}
+
+.MuiSlider-track > .MuiSlider-mark:nth-child(2) {
+  display: none !important;
+}
+
+/* scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a7a7a7;
+  border-radius: 12px;
+}
+
+/* Animation KeyFrames For Chat Typing Dot Component */
+@keyframes loadingFade {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* @media (max-width: 900px) {
+  .ps-sidebar-container .lg {
+    position: fixed !important;
+    left: -270px !important;
+    
+  }
+  
+} */
+
+
+/* PATCH: ADDED THIS TO DISABLE ALL VIEWS EXCEPT DESKTOP */
+/* @media (max-width: 900px) {
+  *{
+    overflow: hidden;
+  }
+} */
