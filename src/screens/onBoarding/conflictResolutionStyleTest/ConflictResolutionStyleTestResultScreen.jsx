@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,33 @@ import { ASSETS } from '../../../config/assets';
 import { ROUTES } from '../../../config/routes';
 import { tokens } from '../../../theme';
 import { $ } from '../../../utils';
+import { CONFLICT_SUMMARY, VALUES_SUMMARY } from '../../../config/backend_endpoints';
+import axios from 'axios';
 
 const ConflictResolutionStyleTestResultScreen = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const navigate = useNavigate();
+  const [summary, setSummary] = useState(null);
+  const accessToken = localStorage.getItem('token'); 
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await axios.get(CONFLICT_SUMMARY, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        setSummary(response.data.summary);
+      } catch (error) {
+        console.error('Error fetching summary:', error);
+      }
+    };
+
+    fetchSummary();
+  }, [accessToken]);
 
   return (
     <Box
@@ -136,13 +157,7 @@ const ConflictResolutionStyleTestResultScreen = () => {
                 maxWidth: $({ size: 620 }),
                 margin: `${$({ size: 4 })} 0 0 0`,
               }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
+              {summary}
             </Typography>
           </Box>
         </Box>

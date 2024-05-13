@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { Box, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 
@@ -7,12 +8,24 @@ import { CustomTextInput, CustomButton } from '../../../components';
 import { ASSETS } from '../../../config/assets';
 import { tokens } from '../../../theme';
 import { $ } from '../../../utils';
+import { RESET_USER_PASSWORD } from '../../../config/backend_endpoints';
 
 const ResetPasswordScreen = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [email, setEmail] = React.useState('');
+
+  const sendEmail = async (email) => {
+    try {
+      const response = await axios.post(RESET_USER_PASSWORD, {
+        email: email,
+      });
+      console.log('Response from API:', response.data);
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
 
   return (
     <Box
@@ -96,7 +109,7 @@ const ResetPasswordScreen = () => {
           />
           <CustomButton
             label='Reset Password'
-            onClick={() => {}}
+            onClick={() => sendEmail(email)}
           />
         </Box>
       </Box>

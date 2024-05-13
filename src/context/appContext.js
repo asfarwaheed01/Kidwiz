@@ -12,6 +12,7 @@ import { API_BASE_URL,
   UPDATE_CHILD,
   GET_ALL_CHILDERN, 
   DELETE_CHILDREN,
+  GOOGLE_LOGIN,
 
 } 
   from '../config/backend_endpoints';
@@ -166,8 +167,6 @@ const AppProvider = ({ children }) => {
     // clearAlert();
   };
 
-  
-
 
   const loginUser = async ({ currentUser }) => {
     dispatch({ type: LOGIN_USER_BEGIN });
@@ -271,7 +270,7 @@ const AppProvider = ({ children }) => {
   // }, []);
 
   const createNewChild = async (child, childImg)=>{
-    // console.log(child.fullname + " " + child.age + " " + child.gender + " " + child.img);
+    console.log(child.fullname + " " + child.birthdate + " " ,+ child.img);
     dispatch({type:ADD_NEW_CHILD_START});
 
     console.log(child);
@@ -300,16 +299,15 @@ const AppProvider = ({ children }) => {
 }
 
 const updateChild = async (child, childImg)=>{
-  // console.log(child.fullname + " " + child.age + " " + child.gender + " " + child.img);
   dispatch({type:UPDATE_CHILD_START});
 
   console.log(child);
 
   let dataForPatch = {...child};
   if (childImg) {
-    dataForPatch.img = childImg;
+    dataForPatch.profile_image = childImg;
   }
-  
+
   
   await axios.patch(UPDATE_CHILD, {
       ...dataForPatch
@@ -348,18 +346,18 @@ const getAllChilds = async () => {
 .then((response) => {
   console.log(response.data)
   dispatch({type:CHILDREN_LOADING_SUCCESS, payload:{users_children:response.data}})
-  // for (let index = 0; index < response.data.length && index < state.children.length; index++) {
-  //     state.children[index] = response.data[index];
-  // }
+  for (let index = 0; index < response.data.length && index < state.children.length; index++) {
+      state.children[index] = response.data[index];
+  }
 
 })
 .catch((error) => {
   // console.log(error);
   dispatch({type:CHILDREN_LOADING_ERROR, payload:{error}})
-  console.error(error)
-  if (error.response.status === 401) {
-    logoutUser();
-  }
+  // console.error(error)
+  // if (error.response.status === 401) {
+  //   logoutUser();
+  // }
 })
 
 }
@@ -372,31 +370,51 @@ const changeSelectedChild = async (selectedIndex) => {
 
 
 
+// const deleteChild = async (child_id) => {
+//   console.log(child_id)
+//   console.log("Token is",state.token)
+//   dispatch({type:CHILDREN_DELETE_START});
+//     const deletePath = `${DELETE_CHILDREN}${child_id}`
+//   await axios.delete(deletePath, {
+//       'id':child_id
+//     },{
+//       headers: {
+//           "Authorization" : `Bearer ${state.token}`,
+//           'Content-Type': 'multipart/form-data'
+//       }
+//   })
+//     .then((response) => {
+//       console.log(response);
+//       dispatch({type:CHILDREN_DELETE_SUCCESS, 
+//         payload:{child:response.data}});
+
+//         // storeInLocalStorage("children", state.children)
+
+//     }, (error) => {
+//       console.log(error);
+//       dispatch({type:CHILDREN_DELETE_ERROR, 
+//         payload:{error}});
+//     });
+// }
+
 const deleteChild = async (child_id) => {
-  dispatch({type:CHILDREN_DELETE_START});
-    
-  await axios.post(DELETE_CHILDREN, {
-      'id':child_id
-    },{
+  console.log(child_id);
+  console.log("Token is", state.token);
+  dispatch({ type: CHILDREN_DELETE_START });
+  const deletePath = `${DELETE_CHILDREN}${child_id}`;
+  try {
+    const response = await axios.delete(deletePath, {
       headers: {
-          "Authorization" : `Bearer ${state.token}`,
-          'Content-Type': 'multipart/form-data'
-      }
-  })
-    .then((response) => {
-      console.log(response);
-      dispatch({type:CHILDREN_DELETE_SUCCESS, 
-        payload:{child:response.data}});
-
-        // storeInLocalStorage("children", state.children)
-
-    }, (error) => {
-      console.log(error);
-      dispatch({type:CHILDREN_DELETE_ERROR, 
-        payload:{error}});
+        Authorization: `Bearer ${state.token}`, 
+      },
     });
-}
-
+    console.log(response);
+    dispatch({ type: CHILDREN_DELETE_SUCCESS, payload: { child: response.data } });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: CHILDREN_DELETE_ERROR, payload: { error } });
+  }
+};
 
 
   useEffect(() => {

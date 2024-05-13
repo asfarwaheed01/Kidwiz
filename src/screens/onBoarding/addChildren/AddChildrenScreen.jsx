@@ -2,20 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-
-// import { useAppContext } from '../../../context/appContext';
-
 import { CustomButton } from '../../../components';
-
 import { ChildrenGroupIcon, RightArrowIcon } from '../../../icons';
-
 import { ASSETS } from '../../../config/assets';
 import { ROUTES } from '../../../config/routes';
 import { tokens } from '../../../theme';
 import { $ } from '../../../utils';
-
-// import AddChildModal from './AddChildModal';
-// import ChildInfoCard from './ChildInfoCard';
 import ChildrenHorzontalCardList from './ChildrenHorzontalCardList';
 
 const AddChildrenScreen = () => {
@@ -23,29 +15,6 @@ const AddChildrenScreen = () => {
   const colors = tokens(theme.palette.mode);
 
   const navigate = useNavigate();
-
-  // const {user, users_children, getAllChilds, childrenLoading, deleteChild, isLoading} = useAppContext();
-
-// console.log(children);
-  // const [childrenData, setChildrenData] = useState([
-  //   { hasInfo: false, disabled: false },
-  //   { hasInfo: false, disabled: false },
-  //   { hasInfo: false, disabled: true },
-  // ]);
-
-  // const [isModalOpen, setIsModalOpen] = useState({
-  //   isOpen: false,
-  //   mode: "create",
-  //   index: -1,
-  // });
-
-
-  // useEffect(() => {
-  //   if(isLoading === false)
-  //     getAllChilds();
-  // }, [isLoading])
-  
-
 
   return (
     <Box

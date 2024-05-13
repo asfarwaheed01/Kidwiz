@@ -1,5 +1,14 @@
 export const ASSETS = {
   LOGO: '/assets/images/logo.png',
+  VOLUME:"/assets/images/voice/volume.png",
+  ADDCIRCLE:"/assets/images/voice/add-circle 2.png",
+  EDITVOICE:"/assets/images/voice/edit.png",
+  DELETEVOICE:"/assets/images/voice/bin.png",
+  POPUPCLOSE:"/assets/images/voice/closePopup.png",
+  RECORDVOICE:"/assets/images/voice/record.png",
+  UPLOADVOICE:"/assets/images/voice/uplaodvoice.png",
+  DELETEPOPUPVOICE:"/assets/images/voice/delrecord.png",
+  SAVEVOICE:"/assets/images/voice/save.png",
   AUTHENTICATION: {
     MAIN_BACKGROUND: '/assets/images/authentication/main-background.png',
     ICONS: {

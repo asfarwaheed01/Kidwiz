@@ -21,6 +21,9 @@ import { ASSETS } from '../../../config/assets';
 import { ROUTES } from '../../../config/routes';
 import { tokens } from '../../../theme';
 import { $ } from '../../../utils';
+import axios from 'axios';
+import { GOOGLE_LOGIN } from '../../../config/backend_endpoints';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 
 const SignUpScreen = () => {
   const theme = useTheme();
@@ -46,6 +49,42 @@ const SignUpScreen = () => {
       }
     }    
   },[,isLoading, user]);
+
+  const handleGoogleClick = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth();
+  
+      const result = await signInWithPopup(auth, provider);
+  
+      const requestData = {
+        email: result.user.email,
+        username: result.user.displayName,
+        avatar: result.user.photoURL,
+      };
+  
+      // Make a POST request using Axios
+      const response = await axios.post(GOOGLE_LOGIN, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      // Handle the response if needed
+      console.log('Response from Google_Login API:', response.data);
+      // Extract user and token from the response
+      const { user, access: token } = response.data;
+
+      // Store user and token in local storage
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+  
+      // Assuming `navigate` is a function to redirect to another page
+      navigate(ROUTES.ON_BOARDING.ADD_CHILDREN);
+    } catch (error) {
+      console.log('could not sign in with google', error);
+    }
+  };
 
   return (
     <Box
@@ -238,7 +277,7 @@ const SignUpScreen = () => {
 
               <CustomButton
                 label='Continue with Google'
-                onClick={() => {}}
+                onClick={handleGoogleClick}
                 sx={{
                   'backgroundColor': colors.white[800],
                   'fontWeight': '400',

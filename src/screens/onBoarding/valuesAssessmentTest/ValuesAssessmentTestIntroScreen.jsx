@@ -156,7 +156,8 @@ const ValuesAssessmentTestIntroScreen = () => {
               isSecondary
               sx={{ maxWidth: $({ size: 220 }) }}
               onClick={() => {
-                navigate(ROUTES.PARENT.DASHBOARD.INDEX);
+                // navigate(ROUTES.PARENT.DASHBOARD.INDEX);
+                navigate(ROUTES.ON_BOARDING.VOICE_CLONE.VOICE);
               }}
             />
             <CustomButton

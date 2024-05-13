@@ -4,6 +4,7 @@ export const ROUTES = {
     LOGIN: '/login',
     SIGN_UP: '/sign-up',
     RESET_PASSWORD: '/reset-password',
+    CONFIRM_PASSWORD:'/recovery-password/:token',
     CONFIRMATION: '/confirmation',
   },
   ON_BOARDING: {
@@ -28,6 +29,10 @@ export const ROUTES = {
       INTRO: '/personality-tests/values-assessment/',
       QUESTIONS: '/personality-tests/values-assessment/questions',
       RESULT: '/personality-tests/values-assessment/result',
+    },
+    VOICE_CLONE: {
+      VOICE: '/personality-tests/voice-clone/',
+      CLONING_DONE: '/personality-tests/voice-clone/cloning-done',
     },
   },
   PARENT: {

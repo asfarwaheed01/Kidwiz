@@ -1,9 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography, useTheme } from '@mui/material';
-import { alpha } from '@mui/material/styles';
-import { Pie } from '@nivo/pie';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Checkbox,
+  Grid,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import { Pie } from "@nivo/pie";
 
-import { useAppContext } from '../../../context/appContext'
+import { useAppContext } from "../../../context/appContext";
 
 import {
   CustomButton,
@@ -12,16 +24,19 @@ import {
   CustomModal,
   CustomSubjectFoucsSlider,
   CustomTextInput,
-} from '../../../components';
+} from "../../../components";
 
-import { SaveIcon } from '../../../icons';
+import { SaveIcon } from "../../../icons";
 
-import { tokens } from '../../../theme';
-import { $ } from '../../../utils';
+import { tokens } from "../../../theme";
+import { $ } from "../../../utils";
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const AddChildModal = ({
   currentChildData = {},
-  isModalOpen = { isOpen: false, mode:"create", index: -1 },
+  isModalOpen = { isOpen: false, mode: "create", index: -1 },
   setIsModalOpen = () => {},
   offset = {},
 }) => {
@@ -29,52 +44,73 @@ const AddChildModal = ({
   const colors = tokens(theme.palette.mode);
 
   const { createNewChild, updateChild, isLoading } = useAppContext();
+  const [birthday, setbirthday] = useState(
+    isModalOpen.mode === "update" && currentChildData.birthday
+      ? currentChildData.birthday
+      : ""
+  );
 
   const [fullname, setFullname] = React.useState(
-    currentChildData.fullname || ''
+    currentChildData.fullname || ""
   );
-  const [age, setAge] = React.useState(currentChildData.age || '');
-  
-  let nameOfProfilePicture = '';
+  // const [characterName, setcharacterName] = React.useState(
+  //   currentChildData.characterName ? [currentChildData.characterName] : []
+  // );
+  const [characterName, setcharacterName] = React.useState(
+    isModalOpen.mode === "update"
+      ? currentChildData.favorite_character
+        ? currentChildData.favorite_character.split(",")
+        : []
+      : []
+  );
+
+  let nameOfProfilePicture = "";
   if (isModalOpen.mode === "update") {
-    const listOfString =  currentChildData.img.split("/");
+    // const listOfString =  currentChildData.img.split("/");
+    const listOfString = currentChildData.profile_image.split("/");
     nameOfProfilePicture = listOfString[listOfString.length - 1];
   }
- const [pictureChanged, setPictureChanged]  =  useState(false);
-  const [profilePicture, setProfilePicture] = useState( isModalOpen.mode === "update"?  {name:nameOfProfilePicture} : null);
-  // React.useState(
-  //   currentChildData.profilePicture || null
-  // );
-
-  // const handleFileChange = (event) => {
-  //   const file = event.target.files[0];
-  //   this.setState({ profilePicture: file });
-  //   setProfilePicture(file);
-  //   console.log(file);
-  //   console.log(JSON.stringify(profilePicture));
-  // }
-
+  const [pictureChanged, setPictureChanged] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(
+    isModalOpen.mode === "update" ? { name: nameOfProfilePicture } : null
+  );
   const genderOptions = [
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
-    { label: 'Oher', value: 'other' },
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
+    { label: "Oher", value: "Other" },
   ];
-  
-  const [gender, setGender] = React.useState( isModalOpen.mode === "update" ? genderOptions.filter((item)=>{
-        return item.value === currentChildData.gender
-    })[0] : '' );
 
-const difficultyOptions = [
-{ label: 'Easy', value: 'easy' },
-{ label: 'Medium', value: 'medium' },
-{ label: 'Hard', value: 'hard' },
-{ label: 'Very Hard', value: 'very-hard' },
-]
-  
+  const [gender, setGender] = React.useState(
+    isModalOpen.mode === "update"
+      ? genderOptions.filter((item) => {
+          return item.value === currentChildData.gender;
+        })[0]
+      : ""
+  );
 
-  const [difficulty, setDifficulty] = React.useState( isModalOpen.mode === "update" ? difficultyOptions.filter((item)=>{
-    return item.value === currentChildData.difficulty
-  })[0] : '' );
+  const difficultyOptions = [
+    { label: "Easy", value: "easy" },
+    { label: "Medium", value: "medium" },
+    { label: "Hard", value: "hard" },
+    { label: "Very Hard", value: "very-hard" },
+  ];
+
+  const names = [
+    { label: "Unicorn", value: "Unicorn" },
+    { label: "cat", value: "Cat" },
+    { label: "Polar Bear", value: "Polar Bear" },
+    { label: "Dog", value: "Dog" },
+    { label: "Butterfly", value: "Butterfly" },
+    { label: "Blue Whale", value: "Blue Whale" },
+  ];
+
+  const [difficulty, setDifficulty] = React.useState(
+    isModalOpen.mode === "update"
+      ? difficultyOptions.filter((item) => {
+          return item.value === currentChildData.difficulty;
+        })[0]
+      : ""
+  );
 
   const [genderDropDownOpen, setGenderDropDownOpen] = React.useState(false);
   const [difficultyDropDownOpen, setDifficultyDropDownOpen] =
@@ -82,83 +118,90 @@ const difficultyOptions = [
 
   const subjectFocusDefaultValue = [
     {
-      id: '1',
-      label: 'Science, biology, & Environment',
+      id: "1",
+      label: "Science, biology, & Environment",
       color: colors.subjectsFocus[100],
       value: Math.floor(Math.random() * 100),
     },
     {
-      id: '2',
-      label: 'Social Study & Languages',
+      id: "2",
+      label: "Social Study & Langubirthdays",
       color: colors.subjectsFocus[200],
       value: Math.floor(Math.random() * 100),
     },
     {
-      id: '3',
-      label: 'English & Coding',
+      id: "3",
+      label: "English & Coding",
       color: colors.subjectsFocus[300],
       value: Math.floor(Math.random() * 100),
     },
     {
-      id: '4',
-      label: 'Logic, Life Skills, Emotions, & Innovation',
+      id: "4",
+      label: "Logic, Life Skills, Emotions, & Innovation",
       color: colors.subjectsFocus[400],
       value: Math.floor(Math.random() * 100),
     },
     {
-      id: '5',
-      label: 'Math, Money, & Music',
+      id: "5",
+      label: "Math, Money, & Music",
       color: colors.subjectsFocus[500],
       value: Math.floor(Math.random() * 100),
     },
   ];
-  // console.log(JSON.parse(currentChildData.subjectFocusGraphData));
-  // console.log(JSON.parse(currentChildData.subjectFocusGraphData));
-let childFocusClone = [];
-if (isModalOpen.mode === "update") {
-  for (let index = 0; index < currentChildData.childfocus.length; index++) {
-    const element = {...currentChildData.childfocus[index]};
-    childFocusClone[index] = element;
+  let childfocusClone = [];
+  if (isModalOpen.mode === "update") {
+    for (let index = 0; index < currentChildData.childfocus.length; index++) {
+      const element = { ...currentChildData.childfocus[index] };
+      childfocusClone[index] = element;
+    }
   }
-}
 
-  const [subjectFocusGraphData, setSubjectFocusGraphData] = React.useState( isModalOpen.mode === "update" ?
-  childFocusClone : subjectFocusDefaultValue
+  const [subjectFocusGraphData, setSubjectFocusGraphData] = React.useState(
+    isModalOpen.mode === "update" ? childfocusClone : subjectFocusDefaultValue
   );
   // console.log(subjectFocusGraphData);
   const [requestToCloseModel, setRequestToCloseModel] = useState(false);
 
   const [errors, setErrors] = React.useState({
-    fullname: '',
-    age: '',
-    profilePicture: '',
-    gender: '',
-    difficulty: '',
+    fullname: "",
+    birthday: "",
+    profilePicture: "",
+    gender: "",
+    difficulty: "",
+    characterName: "",
   });
 
-  const Validate = ({ fullname, age, profilePicture, gender, difficulty }) => {
+  const Validate = ({
+    fullname,
+    birthday,
+    profilePicture,
+    gender,
+    difficulty,
+    characterName,
+  }) => {
     const _errors = { ...errors };
 
-    if (!fullname) _errors.fullname = 'Required!';
-    else if (fullname.length < 3) _errors.fullname = 'Minimum 3 characters!';
-    else if (fullname.length > 50) _errors.fullname = 'Maximum 50 characters!';
-    else _errors.fullname = '';
+    if (!fullname) _errors.fullname = "Required!";
+    else if (fullname.length < 3) _errors.fullname = "Minimum 3 characters!";
+    else if (fullname.length > 50) _errors.fullname = "Maximum 50 characters!";
+    else _errors.fullname = "";
 
-    if (!age) _errors.age = 'Required!';
-    else if (isNaN(age)) _errors.age = 'Must be a number!';
-    else if (age < 1 || age > 100) _errors.age = 'Must be between 1 and 25!';
-    else _errors.age = '';
+    if (!birthday) _errors.birthday = "Required!";
+    else _errors.birthday = "";
 
-    if (!profilePicture) _errors.profilePicture = 'Required!';
+    if (!profilePicture) _errors.profilePicture = "Required!";
     else if (profilePicture?.file?.size > 1024 * 1024 * 2)
-      _errors.profilePicture = 'Maximum file size is 2MB!';
-    else _errors.profilePicture = '';
+      _errors.profilePicture = "Maximum file size is 2MB!";
+    else _errors.profilePicture = "";
 
-    if (!gender) _errors.gender = 'Required!';
-    else _errors.gender = '';
+    if (!gender) _errors.gender = "Required!";
+    else _errors.gender = "";
 
-    if (!difficulty) _errors.difficulty = 'Required!';
-    else _errors.difficulty = '';
+    if (!difficulty) _errors.difficulty = "Required!";
+    else _errors.difficulty = "";
+
+    if (!characterName) _errors.characterName = "Required!";
+    else _errors.characterName = "";
 
     setErrors(_errors);
 
@@ -166,21 +209,25 @@ if (isModalOpen.mode === "update") {
     return true;
   };
 
+  const handleChangeSelect = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setcharacterName(typeof value === "string" ? value.split(",") : value);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (requestToCloseModel === true && isLoading === false) {
-
-      //load default for closing model
       setIsModalOpen({ isOpen: false, index: -1 });
-      setFullname('');
-      setAge('');
+      setFullname("");
+      setbirthday("");
       setProfilePicture(null);
       setPictureChanged(false);
-      setGender('');
-      setDifficulty('');
+      setGender("");
+      setDifficulty("");
+      setcharacterName([]);
       setSubjectFocusGraphData(subjectFocusDefaultValue);
       setRequestToCloseModel(false);
-      
     }
   }, [isLoading]);
 
@@ -188,23 +235,23 @@ if (isModalOpen.mode === "update") {
     <CustomModal
       showBackdrop={true}
       title={isModalOpen.mode === "create" ? "Create Child" : "Update Child"}
-      onClose={() => setIsModalOpen({ isOpen: false,model:"create", index: -1 })}
+      onClose={() =>
+        setIsModalOpen({ isOpen: false, model: "create", index: -1 })
+      }
       offset={offset}
       containerStyle={{
         maxWidth: $({ size: 1040 }),
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: $({ size: 20 }),
       }}
       wrapperStyle={{
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: "50%",
+        transform: "translateX(-50%)",
         width: $({ size: 1040 }),
-      }}>
-
-
-
-      {  (genderDropDownOpen || difficultyDropDownOpen) && (
+      }}
+    >
+      {(genderDropDownOpen || difficultyDropDownOpen) && (
         <Box
           onClick={() => {
             setGenderDropDownOpen(false);
@@ -212,7 +259,7 @@ if (isModalOpen.mode === "update") {
           }}
           sx={{
             background: alpha(colors.extra.grey1, 0.4),
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -222,69 +269,43 @@ if (isModalOpen.mode === "update") {
           }}
         />
       )}
-
-      <Grid
-        container
-        rowGap={$({ size: 16 })}
-        columnSpacing={$({ size: 32 })}>
-        <Grid
-          item
-          xs={12}
-          md={6}>
+      <Grid container rowGap={$({ size: 16 })} columnSpacing={$({ size: 32 })}>
+        <Grid item xs={12} md={6}>
           <CustomTextInput
-            label='Full name'
-            placeholder='e.g. John Doe'
+            label="Full name"
+            placeholder="e.g. John Doe"
             value={fullname}
             onChange={(e) => setFullname(e.target.value)}
             error={errors.fullname}
           />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}>
+        <Grid item xs={12} md={6}>
           <CustomTextInput
-            label='Age'
-            placeholder='e.g. 8'
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            error={errors.age}
+          label="Birth Date"
+            type="date"
+            value={birthday}
+            onChange={(e) => setbirthday(e.target.value)}
           />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}>
+        <Grid item xs={12} md={6}>
           <CustomFileUploader
-            label='Profile Picture'
+            label="Profile Picture"
             placeholder={
-              profilePicture
-                ? profilePicture?.name
-                : 'Upload picture'
+              profilePicture ? profilePicture?.name : "Upload picture"
             }
-            onClick={(file) => 
-              {
-                // console.log(file);
-                setPictureChanged(true);
-                setProfilePicture(file.file);
-                // console.log(JSON.stringify(profilePicture));
-              }
-            }
+            onClick={(file) => {
+              setPictureChanged(true);
+              // Extract the file from the file object
+              setProfilePicture(file.file); // Assuming `file.file` contains the file object
+            }}
             error={errors.profilePicture}
           />
-
-
-          
-
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}>
+        <Grid item xs={12} md={6}>
           <CustomDropDown
-            value={gender?.label || ''}
-            placeholder='Choose gender'
-            label='Gender'
+            value={gender?.label || ""}
+            placeholder="Choose gender"
+            label="Gender"
             dropDownOpen={genderDropDownOpen}
             setDropDownOpen={setGenderDropDownOpen}
             data={genderOptions.map((item) => {
@@ -296,10 +317,11 @@ if (isModalOpen.mode === "update") {
                   <Typography
                     sx={{
                       fontSize: $({ size: 18 }),
-                      fontWeight: gender.value === item.value ? '600' : '400',
+                      fontWeight: gender.value === item.value ? "600" : "400",
                       color: colors.extra.grey1,
                       lineHeight: $({ size: 30 }),
-                    }}>
+                    }}
+                  >
                     {item.label}
                   </Typography>
                 ),
@@ -308,14 +330,11 @@ if (isModalOpen.mode === "update") {
             error={errors.gender}
           />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}>
+        <Grid item xs={12} md={6}>
           <CustomDropDown
-            value={difficulty?.label || ''}
-            placeholder='Choose difficulty'
-            label='Difficulty'
+            value={difficulty?.label || ""}
+            placeholder="Choose difficulty"
+            label="Difficulty"
             dropDownOpen={difficultyDropDownOpen}
             setDropDownOpen={setDifficultyDropDownOpen}
             data={difficultyOptions.map((item) => {
@@ -328,10 +347,11 @@ if (isModalOpen.mode === "update") {
                     sx={{
                       fontSize: $({ size: 18 }),
                       fontWeight:
-                        difficulty?.value === item.value ? '600' : '400',
+                        difficulty?.value === item.value ? "600" : "400",
                       color: colors.extra.grey1,
                       lineHeight: $({ size: 30 }),
-                    }}>
+                    }}
+                  >
                     {item.label}
                   </Typography>
                 ),
@@ -340,26 +360,69 @@ if (isModalOpen.mode === "update") {
             error={errors.difficulty}
           />
         </Grid>
+        <Grid item xs={12} md={6}>
+          <InputLabel
+            id="demo-multiple-checkbox-label"
+            sx={{
+              fontSize: 18,
+              fontWeight: "600",
+              marginBottom: "10px",
+              color: "black", // Replace with your desired color
+            }}
+          >
+            Favorite Characters
+          </InputLabel>
+          <Select
+            // labelId="demo-multiple-checkbox-label"
+            id="demo-multiple-checkbox"
+            label="Birth Date"
+            multiple
+            value={characterName}
+            onChange={handleChangeSelect}
+            input={<OutlinedInput label="Character" />}
+            renderValue={(selected) => selected.join(", ")}
+            placeholder="Character"
+            sx={{
+              width: "100%",
+              borderRadius: "12px",
+              marginBottom: "10px",
+              background: "#ECECEC",
+              padding: "0 5px",
+              border: "none",
+              // color: "#090909",
+              fontSize: "15px",
+            }}
+          >
+            {names.map((name) => (
+              <MenuItem key={name.label} value={name.value}>
+                <Checkbox checked={characterName.indexOf(name.value) > -1} />
+                <ListItemText primary={name.value} />
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
       </Grid>
 
       <Box>
         <Typography
           sx={{
             fontSize: $({ size: 18 }),
-            fontWeight: '500',
+            fontWeight: "500",
             lineHeight: $({ size: 30 }),
             color: colors.solids.black,
-          }}>
+          }}
+        >
           Focus
         </Typography>
 
         <Typography
           sx={{
             fontSize: $({ size: 13.5 }),
-            fontWeight: '400',
+            fontWeight: "400",
             lineHeight: $({ size: 25 }),
             color: colors.solids.black,
-          }}>
+          }}
+        >
           The more the level of focus of a category is, the more we emphasize on
           it in your child’s learning journey. Choose wisely!
         </Typography>
@@ -369,26 +432,30 @@ if (isModalOpen.mode === "update") {
         container
         rowGap={$({ size: 20 })}
         columnSpacing={$({ size: 20 })}
-        sx={{ pr: $({ size: 20 }) }}>
+        sx={{ pr: $({ size: 20 }) }}
+      >
         <Grid
           item
           xs={12}
           md={6}
           lg={4}
-          sx={{ display: 'flex', justifyContent: 'center' }}>
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
           <Box
             sx={{
-              position: 'relative',
+              position: "relative",
               height: $({ size: 280 }),
               width: $({ size: 280 }),
-            }}>
+            }}
+          >
             <Box
               sx={{
                 filter: `drop-shadow(0 0 ${$({ size: 5 })} ${alpha(
                   colors.solids.black,
                   0.1
                 )})`,
-              }}>
+              }}
+            >
               <Pie
                 data={subjectFocusGraphData}
                 innerRadius={0.65}
@@ -407,37 +474,31 @@ if (isModalOpen.mode === "update") {
 
             <Typography
               sx={{
-                fontWeight: '700',
+                fontWeight: "700",
                 fontSize: $({ size: 18 }),
                 color: colors.extra.grey2,
-                position: 'absolute',
+                position: "absolute",
                 lineHeight: $({ size: 30 }),
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
                 maxWidth: $({ size: 150 }),
-                textAlign: 'center',
-              }}>
+                textAlign: "center",
+              }}
+            >
               Subjects Focus
             </Typography>
           </Box>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}
-          lg={8}>
+        <Grid item xs={12} md={6} lg={8}>
           <Grid
             container
             rowGap={$({ size: 16 })}
-            columnSpacing={$({ size: 32 })}>
+            columnSpacing={$({ size: 32 })}
+          >
             {subjectFocusGraphData.map((item, index) => {
               return (
-                <Grid
-                  item
-                  xs={12}
-                  lg={6}
-                  key={index}>
+                <Grid item xs={12} lg={6} key={index}>
                   <CustomSubjectFoucsSlider
                     label={item.label}
                     color={item.color}
@@ -457,12 +518,13 @@ if (isModalOpen.mode === "update") {
 
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
+          display: "flex",
+          justifyContent: "flex-end",
           gap: $({ size: 24 }),
-        }}>
+        }}
+      >
         <CustomButton
-          label='Cancel'
+          label="Cancel"
           isSecondary
           sx={{
             maxWidth: $({ size: 160 }),
@@ -476,8 +538,8 @@ if (isModalOpen.mode === "update") {
           }}
         />
         <CustomButton
-          label={isLoading ? 'Saving' : 'Save'}
-          disabled = {isLoading}
+          label={isLoading ? "Saving" : "Save"}
+          disabled={isLoading}
           sx={{
             maxWidth: $({ size: 160 }),
             boxShadow: `0 0 ${$({ size: 4 })} 0 ${alpha(
@@ -489,75 +551,87 @@ if (isModalOpen.mode === "update") {
           onClick={() => {
             const isValid = Validate({
               fullname,
-              age,
+              // birthday: birthday ? birthday.toISOString().split('T')[0] : null,
+              birthday: birthday,
               profilePicture,
               gender,
               difficulty,
+              characterName,
             });
-
-            // if (!isValid) return;
-
-            // console.log(profilePicture);
-    //         const formData = new FormData();
-    // formData.append('name', fullname);
-    // formData.append('age', age);
-    // formData.append('profilePicture', profilePicture);
-// console.log(formData);
-
-            const child= {"fullname": fullname,"age":age,"gender":gender.value,"img":profilePicture, difficulty:difficulty.value , childfocus:JSON.stringify(subjectFocusGraphData)}
-            // console.log(JSON.stringify(child) );
-            // return;
+            console.log(
+              fullname,
+              birthday,
+              profilePicture,
+              gender,
+              difficulty,
+              characterName
+            );
+            const child = {
+              fullname,
+              // birthday: birthday ? birthday.toISOString().split('T')[0] : null,
+              birthday: birthday,
+              gender: gender.value,
+              profile_image: profilePicture,
+              difficulty: difficulty.value,
+              favorite_character: characterName.join(","),
+              childfocus: JSON.stringify(subjectFocusGraphData),
+            };
             if (isModalOpen.mode === "create") {
               createNewChild(child, profilePicture);
-              setRequestToCloseModel(true);  
-            }else{
-              let child = {id:currentChildData.id}
+              setRequestToCloseModel(true);
+            } else {
+              let child = { child_id: currentChildData.id };
               if (currentChildData.fullname !== fullname) {
-                child = {...child, "fullname": fullname}
+                child = { ...child, fullname: fullname };
               }
-              if (currentChildData.age !== age) {
-                child = {...child, "age":age}
+              if (currentChildData.birthday !== birthday) {
+                // child.birthday = birthday ? birthday.toISOString() : null;
+                child.birthday = birthday;
               }
               if (currentChildData.gender !== gender.value) {
-                child = {...child, "gender":gender.value}
+                child = { ...child, gender: gender.value };
               }
               if (currentChildData.difficulty !== difficulty.value) {
-                child = {...child, difficulty:difficulty.value }
+                child = { ...child, difficulty: difficulty.value };
               }
-              // console.log(JSON.stringify(currentChildData.childfocus));
-
-              // console.log(JSON.stringify(subjectFocusGraphData));
+              if (
+                currentChildData.favorite_character !== characterName.join(",")
+              ) {
+                child = {
+                  ...child,
+                  favorite_character: characterName.join(","),
+                };
+              }
               let focusChange = false;
-              for (let index = 0; index < currentChildData.childfocus.length; index++) {
-                // console.log(currentChildData.childfocus[index].value + " ---- " + subjectFocusGraphData[index].value);
-                if (currentChildData.childfocus[index].value !== subjectFocusGraphData[index].value) {
+              for (
+                let index = 0;
+                index < currentChildData.childfocus.length;
+                index++
+              ) {
+                if (
+                  currentChildData.childfocus[index].value !==
+                  subjectFocusGraphData[index].value
+                ) {
                   focusChange = true;
                   break;
-                }              
+                }
               }
-              // console.log(focusChange);
-
-              
               if (focusChange) {
-                child = {...child, childfocus: JSON.stringify(subjectFocusGraphData) }
+                child = {
+                  ...child,
+                  childfocus: JSON.stringify(subjectFocusGraphData),
+                };
               }
               if (pictureChanged) {
                 console.log("Picture also changed");
+                // setPictureChanged(profilePicture);
               }
-
-              // console.log(JSON.stringify(child) );
+              console.log("child data is", child);
+              // updateChild(child, pictureChanged ? profilePicture : null);
+              // updateChild(child, pictureChanged ? profilePicture : null);
               updateChild(child, pictureChanged ? profilePicture : null);
-              setRequestToCloseModel(true);  
+              setRequestToCloseModel(true);
             }
-            
-
-            // setIsModalOpen({ isOpen: false, index: -1 });
-            // setFullname('');
-            // setAge('');
-            // setProfilePicture(null);
-            // setGender('');
-            // setDifficulty('');
-            // setSubjectFocusGraphData(subjectFocusDefaultValue);
           }}
         />
       </Box>

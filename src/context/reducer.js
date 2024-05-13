@@ -23,9 +23,10 @@ import {
   CHILDREN_DELETE_START,
   CHILDREN_DELETE_SUCCESS,
   CHILDREN_DELETE_ERROR,
+  LOGIN_GOOGLE_ERROR,
+  LOGIN_GOOGLE_SUCCESS,
 
   CHILD_SELECT_CHANGE,
-  
 } from './actions';
 
 import { initialState } from './appContext';
@@ -91,7 +92,17 @@ const reducer = (state, action) => {
       token: action.payload.token,
     };
   }
-  if (action.type === LOGIN_USER_ERROR) {
+  if (action.type === LOGIN_GOOGLE_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: false,
+      alertText: "",
+      user: action.payload.user,
+      token: action.payload.token,
+    };
+  }
+  if (action.type === LOGIN_GOOGLE_ERROR) {
     return {
       ...state,
       isLoading: false,
@@ -193,19 +204,36 @@ const reducer = (state, action) => {
       childrenLoading: true,
     }
   }
-  if (action.type === CHILDREN_LOADING_SUCCESS) {
+  // if (action.type === CHILDREN_LOADING_SUCCESS) {
 
+  //   state.users_children =  [{},{},{}];
+  //   for (let index = 0; index < state.users_children.length && index < action.payload.users_children.length; index++) {
+  //       state.users_children[index] = {...action.payload.users_children[index], childfocus: JSON.parse(action.payload.users_children[index].childfocus)};
+  //       // console.log(JSON.parse(action.payload.children[index].childfocus));
+  //   }
+
+  //   return {
+  //     ...state,
+  //     childrenLoading: false
+  //   }
+  // }
+  if (action.type === CHILDREN_LOADING_SUCCESS) {
     state.users_children =  [{},{},{}];
     for (let index = 0; index < state.users_children.length && index < action.payload.users_children.length; index++) {
-        state.users_children[index] = {...action.payload.users_children[index], childfocus: JSON.parse(action.payload.users_children[index].childfocus)};
-        // console.log(JSON.parse(action.payload.children[index].childfocus));
+        const childfocusData = action.payload.users_children[index].childfocus; // Get the childfocus data directly
+        console.log('Child Focus Data:', childfocusData); 
+        try {
+            const childfocus = typeof childfocusData === 'string' ? JSON.parse(childfocusData) : childfocusData;
+            state.users_children[index] = {...action.payload.users_children[index], childfocus};
+        } catch (error) {
+            console.log('Error parsing child focus JSON:', error);
+        }
     }
-
     return {
-      ...state,
-      childrenLoading: false
+        ...state,
+        childrenLoading: false
     }
-  }
+}
   if (action.type === CHILDREN_LOADING_ERROR) {
     return {
       ...state,

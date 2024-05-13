@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
+import { GoogleAuthProvider, getAuth, signInWithPopup,FacebookAuthProvider } from 'firebase/auth';
+import { GOOGLE_LOGIN } from '../../../config/backend_endpoints';
+import {app} from "../../../firebase"
 import {
   Box,
   Checkbox,
@@ -9,7 +12,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppContext } from '../../../context/appContext';
+import { initialState, useAppContext } from '../../../context/appContext';
 
 import {
   AuthenticationFormBackground,
@@ -21,8 +24,12 @@ import { ASSETS } from '../../../config/assets';
 import { ROUTES } from '../../../config/routes';
 import { tokens } from '../../../theme';
 import { $ } from '../../../utils';
+import axios from 'axios';
+import { LOGIN_GOOGLE_ERROR, LOGIN_GOOGLE_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS } from '../../../context/actions';
+import reducer from '../../../context/reducer';
 
 const LoginScreen = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -43,18 +50,97 @@ const LoginScreen = () => {
         if( user.no_of_chlid === 0){
           navigate(ROUTES.ON_BOARDING.ADD_CHILDREN);
         }else if( user.no_of_chlid > 0){
-          navigate(ROUTES.PARENT.DASHBOARD.INDEX);
+          // navigate(ROUTES.PARENT.DASHBOARD.INDEX);
+          navigate(ROUTES.ON_BOARDING.ADD_CHILDREN);
         }
         
       }
       else if (user.role.toLowerCase() === "admin") {
         // console.log("Its Admin");
         navigate(ROUTES.ADMIN.DASHBOARD.INDEX);
+        
       }
     }  
     
 
   },[isLoading, user]);
+  const handleGoogleClick = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth();
+      const result = await signInWithPopup(auth, provider);
+  
+      // Construct the data object to be sent in the request
+      const requestData = {
+        email: result.user.email,
+        username: result.user.displayName,
+        avatar: result.user.photoURL,
+      };
+  
+      // Make a POST request using Axios
+      const response = await axios.post(GOOGLE_LOGIN, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log("Response From Google API",response.data)
+      const data = response.data;
+      let user = data.user;
+      user = { ...user , "role": data.role, "no_of_chlid":data.no_of_chlid, "onboard": data.onboard, "tier": data.tier, "trail":data.trail, "img":data.img, "mobile_number":data.mobile_number };
+      const token = data.access;
+      console.log("New User",user)
+      
+      // Update the state with user data
+      dispatch({
+        type: LOGIN_GOOGLE_SUCCESS,
+        payload: { user, token },
+      });
+      
+      // Store user and token in local storage
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", token);
+      window.location.reload();
+    } catch (error) {
+      console.error('Could not sign in with Google', error);
+      
+      let error_message = "Error Logging in with Google";
+      // Dispatch error action
+      dispatch({
+        type: LOGIN_GOOGLE_ERROR,
+        payload: { msg: error_message },
+      });
+    }
+  };
+
+  const handleFacebookClick = async () => {
+    try {
+      // Authenticate with Facebook
+      const provider = new FacebookAuthProvider();
+      const auth = getAuth();
+      const response = await signInWithPopup(auth, provider);
+  
+      // Extract user data
+      const userData = {
+        email: response.user.email,
+        username: response.user.displayName,
+        avatar: response.user.photoURL
+      };
+  
+      // Send user data to the backend API
+      const res = await axios.post(GOOGLE_LOGIN, userData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      console.log('User data sent to backend:', res.data);
+  
+      // Optionally, navigate or perform other actions after successful login
+    } catch (error) {
+      console.error('Error logging in with Facebook:', error);
+    }
+  };
 
   return (
     <Box
@@ -227,7 +313,7 @@ const LoginScreen = () => {
 
               <CustomButton
                 label='Continue with Google'
-                onClick={() => {    }}
+                onClick={handleGoogleClick}
                 sx={{
                   'backgroundColor': colors.white[800],
                   'fontWeight': '400',
@@ -247,7 +333,7 @@ const LoginScreen = () => {
 
               <CustomButton
                 label='Continue with Facebook'
-                onClick={() => {}}
+                onClick={handleFacebookClick}
                 sx={{
                   'backgroundColor': colors.white[800],
                   'fontWeight': '400',

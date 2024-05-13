@@ -1,72 +1,96 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { alpha, useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
-import { CustomButton, VerticalFiller } from '../../../components';
+import { CustomButton, VerticalFiller } from "../../../components";
 
-import { RightArrowIcon, BigFivePersonalityTestIcon } from '../../../icons';
+import { RightArrowIcon, BigFivePersonalityTestIcon } from "../../../icons";
 
-import { ASSETS } from '../../../config/assets';
-import { ROUTES } from '../../../config/routes';
-import { tokens } from '../../../theme';
-import { $ } from '../../../utils';
+import { ASSETS } from "../../../config/assets";
+import { ROUTES } from "../../../config/routes";
+import { tokens } from "../../../theme";
+import { $ } from "../../../utils";
+import { FIVERFACTOR_SUMMARY } from "../../../config/backend_endpoints";
+import axios from "axios";
 
 const BigFivePersonalityTestResultScreen = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem("token");
+  const [personalityData, setPersonalityData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(FIVERFACTOR_SUMMARY, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        console.log("API Response:", response.data);
+        setPersonalityData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Box
       sx={{
         backgroundColor: colors.grey[900],
-        height: 'max-content',
-        minHeight: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        height: "max-content",
+        minHeight: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         padding: {
           xs: $({ size: 20 }),
           lg: $({ size: 40 }),
         },
-      }}>
+      }}
+    >
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
           backgroundColor: colors.white[800],
           boxShadow: `0 0 ${$({ size: 8 })} 0 ${alpha(
             colors.solids.black,
             0.25
           )}`,
-          width: '100%',
+          width: "100%",
           borderRadius: $({ size: 12 }),
           flexGrow: 1,
           gap: $({ size: 24 }),
-        }}>
+        }}
+      >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            height: '100%',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
             gap: $({ size: 8 }),
             marginBottom: $({ size: 12 }),
-          }}>
+          }}
+        >
           <Box
-            component='img'
-            alt='logo'
+            component="img"
+            alt="logo"
             src={ASSETS.LOGO}
             sx={{
               width: {
                 xs: $({ size: 140 }),
                 lg: $({ size: 160 }),
               },
-              alignSelf: 'flex-start',
+              alignSelf: "flex-start",
               margin: {
                 xs: `${$({ size: 32 })} 0 0 ${$({ size: 32 })}`,
                 lg: `${$({ size: 40 })} 0 0 ${$({ size: 40 })}`,
@@ -76,9 +100,9 @@ const BigFivePersonalityTestResultScreen = () => {
 
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               mt: {
                 xs: $({ size: 24 }),
                 lg: 0,
@@ -87,7 +111,8 @@ const BigFivePersonalityTestResultScreen = () => {
                 xs: `0 ${$({ size: 24 })}`,
                 lg: 0,
               },
-            }}>
+            }}
+          >
             <Box
               sx={{
                 borderRadius: $({ size: 160 }),
@@ -104,10 +129,11 @@ const BigFivePersonalityTestResultScreen = () => {
                   xs: $({ size: 140 }),
                   lg: $({ size: 160 }),
                 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <BigFivePersonalityTestIcon
                 size={$({ size: 64, numeric: true })}
               />
@@ -116,47 +142,50 @@ const BigFivePersonalityTestResultScreen = () => {
             <Typography
               sx={{
                 fontSize: $({ size: 32 }),
-                fontWeight: '600',
+                fontWeight: "600",
                 lineHeight: $({ size: 40 }),
-                textAlign: 'center',
+                textAlign: "center",
                 color: colors.grey[200],
                 margin: `${$({ size: 16 })} 0`,
-              }}>
+              }}
+            >
               Big Five Personality Test
             </Typography>
 
             <Typography
               sx={{
                 fontSize: $({ size: 32 }),
-                fontWeight: '600',
+                fontWeight: "600",
                 lineHeight: $({ size: 40 }),
-                textAlign: 'center',
+                textAlign: "center",
                 color: colors.grey[200],
                 margin: `${$({ size: 16 })} 0`,
-              }}>
+              }}
+            >
               Your Result
             </Typography>
           </Box>
 
           <Box
             sx={{
-              'maxWidth': $({ size: 768 }),
-              'overflowX': 'scroll',
-              'overflowY': 'hidden',
-              'width': {
+              maxWidth: $({ size: 768 }),
+              overflowX: "scroll",
+              overflowY: "hidden",
+              width: {
                 xs: `calc(100% - ${$({ size: 48 })})`,
-                lg: '100%',
+                lg: "100%",
               },
-              '&::-webkit-scrollbar': {
+              "&::-webkit-scrollbar": {
                 height: $({ size: 6 }),
                 borderRadius: $({ size: 6 }),
               },
-              '&::-webkit-scrollbar-thumb': {
+              "&::-webkit-scrollbar-thumb": {
                 backgroundColor: colors.extra.grey4,
                 borderRadius: $({ size: 6 }),
               },
-            }}>
-            <VerticalFiller
+            }}
+          >
+            {/* <VerticalFiller
               data={[
                 {
                   label: 'Openness',
@@ -184,20 +213,51 @@ const BigFivePersonalityTestResultScreen = () => {
                   color: colors.verticalFiller[500],
                 },
               ]}
-            />
+            /> */}
+            {personalityData && Object.keys(personalityData).length > 0 && (
+              <VerticalFiller
+                data={[
+                  {
+                    label: "Openness",
+                    value: personalityData.Openness,
+                    color: colors.verticalFiller[100],
+                  },
+                  {
+                    label: "Conscientiousness",
+                    value: personalityData.Conscientiousness,
+                    color: colors.verticalFiller[200],
+                  },
+                  {
+                    label: "Extraversion",
+                    value: personalityData.Extraversion,
+                    color: colors.verticalFiller[300],
+                  },
+                  {
+                    label: "Agreeableness",
+                    value: personalityData.Agreeableness,
+                    color: colors.verticalFiller[400],
+                  },
+                  {
+                    label: "Neuroticism",
+                    value: personalityData.Neuroticism,
+                    color: colors.verticalFiller[500],
+                  },
+                ]}
+              />
+            )}
           </Box>
         </Box>
 
         <CustomButton
-          label='Continue'
+          label="Continue"
           rightIcon={<RightArrowIcon size={$({ size: 24, numeric: true })} />}
           sx={{
-            width: 'fit-content',
+            width: "fit-content",
             margin: {
               xs: `0 ${$({ size: 24 })} ${$({ size: 24 })} 0`,
               lg: `0 ${$({ size: 40 })} ${$({ size: 40 })} 0`,
             },
-            alignSelf: 'flex-end',
+            alignSelf: "flex-end",
           }}
           onClick={() => {
             navigate(ROUTES.ON_BOARDING.EMOTIONAL_INTELLIGENCE.INTRO);

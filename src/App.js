@@ -70,6 +70,9 @@ import {
   AdminDashboardLayout,
 } from "./components";
 import DailyQuizResult from "./screens/parent/dailyQuiz/DailyQuizResult";
+import VoiceClone from "./screens/onBoarding/voiceCloning/VoiceClone";
+import VoiceCloneDone from "./screens/onBoarding/voiceCloning/VoiceCloneDone";
+import ConfirmPassword from "./screens/authentication/confirmPassword/ConfirmPassword";
 
 const Redirect = ({ to }) => {
   const navigate = useNavigate();
@@ -132,6 +135,10 @@ const App = () => {
           <Route
             path={ROUTES.AUTHENTICATION.RESET_PASSWORD}
             element={<ResetPasswordScreen />}
+          />
+          <Route
+            path={ROUTES.AUTHENTICATION.CONFIRM_PASSWORD}
+            element={<ConfirmPassword/>}
           />
 
           <Route
@@ -206,6 +213,16 @@ const App = () => {
           <Route
             path={ROUTES.ON_BOARDING.VALUES_ASSESSMENT.RESULT}
             element={<ValuesAssessmentTestResultScreen />}
+          />
+
+          <Route
+            path={ROUTES.ON_BOARDING.VOICE_CLONE.VOICE}
+            element={<VoiceClone/>}
+          />
+
+          <Route
+            path={ROUTES.ON_BOARDING.VOICE_CLONE.CLONING_DONE}
+            element={<VoiceCloneDone/>}
           />
 
           <Route
