@@ -205,7 +205,7 @@ const VoiceClone = () => {
             {/* Heading */}
             <Typography
               variant="h4"
-              sx={{ color: "#FAFAFA", marginBottom: $({ size: 28 }) }}
+              sx={{ color: "#FAFAFA", marginBottom: $({ size: 30 }), fontWeight:700 }}
             >
               {parentName || "Your Voices"}
             </Typography>
@@ -266,7 +266,6 @@ const VoiceClone = () => {
             sx={{
               width: "fit-content",
               margin: {
-                // xs: `0 ${$({ size: 24 })} ${$({ size: 24 })} 0`,
                 lg: `0 ${$({ size: 40 })} ${$({ size: 0 })} 0`,
               },
               alignSelf: "flex-end",

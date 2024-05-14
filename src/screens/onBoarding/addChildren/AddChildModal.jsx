@@ -281,7 +281,7 @@ const AddChildModal = ({
         </Grid>
         <Grid item xs={12} md={6}>
           <CustomTextInput
-          label="Birth Date"
+            label="Birth Date"
             type="date"
             value={birthday}
             onChange={(e) => setbirthday(e.target.value)}
@@ -295,8 +295,7 @@ const AddChildModal = ({
             }
             onClick={(file) => {
               setPictureChanged(true);
-              // Extract the file from the file object
-              setProfilePicture(file.file); // Assuming `file.file` contains the file object
+              setProfilePicture(file.file);
             }}
             error={errors.profilePicture}
           />
@@ -365,23 +364,22 @@ const AddChildModal = ({
             id="demo-multiple-checkbox-label"
             sx={{
               fontSize: 18,
-              fontWeight: "600",
+              fontWeight: "500",
               marginBottom: "10px",
-              color: "black", // Replace with your desired color
+              color: "black",
             }}
           >
             Favorite Characters
           </InputLabel>
-          <Select
-            // labelId="demo-multiple-checkbox-label"
+          {/* <Select
+            labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
-            label="Birth Date"
+            label="Favourite Character"
             multiple
             value={characterName}
             onChange={handleChangeSelect}
-            input={<OutlinedInput label="Character" />}
+            input={<OutlinedInput />}
             renderValue={(selected) => selected.join(", ")}
-            placeholder="Character"
             sx={{
               width: "100%",
               borderRadius: "12px",
@@ -389,7 +387,6 @@ const AddChildModal = ({
               background: "#ECECEC",
               padding: "0 5px",
               border: "none",
-              // color: "#090909",
               fontSize: "15px",
             }}
           >
@@ -397,6 +394,42 @@ const AddChildModal = ({
               <MenuItem key={name.label} value={name.value}>
                 <Checkbox checked={characterName.indexOf(name.value) > -1} />
                 <ListItemText primary={name.value} />
+              </MenuItem>
+            ))}
+          </Select> */}
+          <Select
+            labelId="demo-multiple-checkbox-label"
+            id="demo-multiple-checkbox"
+            label="Favourite Character"
+            multiple
+            value={characterName}
+            onChange={handleChangeSelect}
+            input={<OutlinedInput/>}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
+                return <em>Favourite Character</em>;
+              }
+              return selected.join(", ");
+            }}
+            displayEmpty
+            sx={{
+              width: "100%",
+              borderRadius: "12px",
+              marginBottom: "10px",
+              background: "#ECECEC",
+              padding: "0px 3px",
+              border: "none",
+              fontSize: "14px",
+              fontWeight:500
+            }}
+          >
+            <MenuItem disabled value="">
+            <span style={{ color: "#a9a9a9", fontSize: "15px" }}>Favourite Character</span>
+            </MenuItem>
+            {names.map((name) => (
+              <MenuItem key={name.label} value={name.value}>
+                <Checkbox checked={characterName.indexOf(name.value) > -1} />
+                <ListItemText primary={name.value}/>
               </MenuItem>
             ))}
           </Select>
@@ -538,7 +571,7 @@ const AddChildModal = ({
           }}
         />
         <CustomButton
-          label={isLoading ? "Saving" : "Save"}
+          label={isLoading ? "Saving..." : "Save"}
           disabled={isLoading}
           sx={{
             maxWidth: $({ size: 160 }),
@@ -551,7 +584,6 @@ const AddChildModal = ({
           onClick={() => {
             const isValid = Validate({
               fullname,
-              // birthday: birthday ? birthday.toISOString().split('T')[0] : null,
               birthday: birthday,
               profilePicture,
               gender,

@@ -8,13 +8,16 @@ import { ASSETS } from '../../../config/assets';
 
 import { CustomTextInput, CustomButton } from '../../../components';
 import { RESET_USER_PASSWORD } from '../../../config/backend_endpoints';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const ConfirmPassword = ({ token }) => {
+const ConfirmPassword = () => {
+    const navigate = useNavigate();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const { token } = useParams();
 
     const handleResetPassword = async () => {
         if (password !== confirmPassword) {
@@ -29,10 +32,9 @@ const ConfirmPassword = ({ token }) => {
                 confirm_password: confirmPassword
             });
             console.log('Password reset successful:', response.data);
-            // Handle success
+            navigate('/login');
         } catch (error) {
             console.error('Error resetting password:', error);
-            // Handle error
         }
     };
 
@@ -82,7 +84,6 @@ const ConfirmPassword = ({ token }) => {
                         alt='logo'
                         style={{
                             height: $({ size: 65 }),
-                            // width: $({ size: 231 }),
                             paddingRight: $({ size: 16 }),
                             marginTop: `-${$({ size: 4 })}`,
                         }}

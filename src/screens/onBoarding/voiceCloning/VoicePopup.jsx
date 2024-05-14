@@ -517,6 +517,7 @@ const CreateVoicePopup = ({ open, onClose }) => {
           <Button
             variant="contained"
             onClick={onSave}
+            disabled={loading}
             sx={{
               borderRadius: "20px",
               paddingX: "20px",
@@ -529,7 +530,7 @@ const CreateVoicePopup = ({ open, onClose }) => {
               fontWeight: "500",
             }}
           >
-            {loading ? "Saving..." : "Save"}{" "}
+            {loading ? "Saving..." : "Save"}
             <img
               src={ASSETS.SAVEVOICE}
               alt="Save Upload"
