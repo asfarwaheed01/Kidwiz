@@ -371,32 +371,7 @@ const AddChildModal = ({
           >
             Favorite Characters
           </InputLabel>
-          {/* <Select
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            label="Favourite Character"
-            multiple
-            value={characterName}
-            onChange={handleChangeSelect}
-            input={<OutlinedInput />}
-            renderValue={(selected) => selected.join(", ")}
-            sx={{
-              width: "100%",
-              borderRadius: "12px",
-              marginBottom: "10px",
-              background: "#ECECEC",
-              padding: "0 5px",
-              border: "none",
-              fontSize: "15px",
-            }}
-          >
-            {names.map((name) => (
-              <MenuItem key={name.label} value={name.value}>
-                <Checkbox checked={characterName.indexOf(name.value) > -1} />
-                <ListItemText primary={name.value} />
-              </MenuItem>
-            ))}
-          </Select> */}
+          
           <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
@@ -558,6 +533,7 @@ const AddChildModal = ({
       >
         <CustomButton
           label="Cancel"
+          disabled={isLoading}
           isSecondary
           sx={{
             maxWidth: $({ size: 160 }),

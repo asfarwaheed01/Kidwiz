@@ -500,6 +500,7 @@ const CreateVoicePopup = ({ open, onClose }) => {
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
           <Button
             onClick={onClose}
+            disabled={loading}
             sx={{
               mr: 2,
               bgcolor: "white",

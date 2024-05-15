@@ -100,6 +100,9 @@ const LoginScreen = () => {
       // Store user and token in local storage
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
+      setTimeout(() => {
+        navigate(ROUTES.ON_BOARDING.ADD_CHILDREN);
+      }, 1000);
       window.location.reload();
     } catch (error) {
       console.error('Could not sign in with Google', error);
