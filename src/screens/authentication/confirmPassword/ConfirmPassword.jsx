@@ -9,6 +9,7 @@ import { ASSETS } from '../../../config/assets';
 import { CustomTextInput, CustomButton } from '../../../components';
 import { RESET_USER_PASSWORD } from '../../../config/backend_endpoints';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../config/routes';
 
 const ConfirmPassword = () => {
     const navigate = useNavigate();
@@ -32,9 +33,10 @@ const ConfirmPassword = () => {
                 confirm_password: confirmPassword
             });
             console.log('Password reset successful:', response.data);
-            navigate('/login');
+            navigate(ROUTES.AUTHENTICATION.LOGIN);
         } catch (error) {
             console.error('Error resetting password:', error);
+            setErrorMessage(error.message)
         }
     };
 

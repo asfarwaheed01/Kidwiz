@@ -382,7 +382,7 @@ const AddChildModal = ({
             input={<OutlinedInput/>}
             renderValue={(selected) => {
               if (selected.length === 0) {
-                return <em>Favourite Character</em>;
+                return <p>Favourite Character</p>;
               }
               return selected.join(", ");
             }}
@@ -399,7 +399,7 @@ const AddChildModal = ({
             }}
           >
             <MenuItem disabled value="">
-            <span style={{ color: "#a9a9a9", fontSize: "15px" }}>Favourite Character</span>
+            <span style={{ color: "#a9a9a9", fontSize: "15px", fontStyle:"normal" }}>Favourite Character</span>
             </MenuItem>
             {names.map((name) => (
               <MenuItem key={name.label} value={name.value}>

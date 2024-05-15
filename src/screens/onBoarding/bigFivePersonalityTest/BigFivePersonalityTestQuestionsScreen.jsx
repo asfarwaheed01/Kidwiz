@@ -23,71 +23,9 @@ const BigFivePersonalityTestQuestionsScreen = () => {
   const colors = tokens(theme.palette.mode);
 
   const navigate = useNavigate();
-
-  // React.useEffect(() => {
-  //   axios.get(GET_FIVEFACTOR_QUESTIONS)
-  //     .then(response => {
-  //       const { questions } = response.data;
-  //       const formattedQuestions = questions.map(question => `${question.text}`);
-  //       setQuestions(formattedQuestions);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching questions:', error);
-  //     });
-  // }, []);
-
-  // const [questions, setQuestions] = React.useState([]);
-  // const [answers, setAnswers] = React.useState([]);
-
-  // const [currentQuestion, setCurrentQuestion] = React.useState(1);
-  // const [likertScaleValue, setLikertScaleValue] = React.useState(2);
-
-  // const HandleNext = () => {
-  //   setAnswers([...answers, likertScaleValue]);
-  //   setCurrentQuestion(currentQuestion + 1);
-  //   setLikertScaleValue(2);
-  // };
-
-  // const HandleSubmit = () => {
-  //   setAnswers([...answers, likertScaleValue]);
-  
-  //   // Prepare user response data
-  //   const userResponseData = {};
-  //   questions.forEach((question, index) => {
-  //     const questionId = `Q${index + 1}`;
-  //     userResponseData[questionId] = answers[index] || 1; // Default to 1 if answer is missing
-  //   });
-
-  //   const accessToken = localStorage.getItem('token');
-  
-  //   try {
-  //     // Convert user response data to string
-  //     const formattedData = JSON.stringify(userResponseData);
-  
-  //     // Create form data
-  //     const formData = new FormData();
-  //     formData.append('user_response_data', formattedData);
-  
-  //     console.log(formData);
-  //     // Post form data to EQ_USER_RESPONSE endpoint
-  //     axios.post(FIVEFACTOR_USER_RESPONSE, formData, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     })
-  //       .then(response => {
-  //         navigate(ROUTES.ON_BOARDING.BIG_FIVE_PERSONALITY.RESULT);
-  //       })
-  //       .catch(error => {
-  //         console.error('Error submitting user response:', error);
-  //       });
-  //   } catch (error) {
-  //     console.error('Error formatting user response:', error);
-  //   }
-  // };
   const [questions, setQuestions] = React.useState([]);
   const [answers, setAnswers] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
   const [currentQuestion, setCurrentQuestion] = React.useState(1);
   const [likertScaleValue, setLikertScaleValue] = React.useState(2);
 
@@ -166,26 +104,34 @@ const BigFivePersonalityTestQuestionsScreen = () => {
     const userResponseData = {
       [questionId]: likertScaleValue || 1 
     };
-
+  
     try {
       const formattedData = JSON.stringify(userResponseData);
-
+  
       const formData = new FormData();
       formData.append('user_response_data', formattedData);
-
+      setLoading(true);
+  
       axios.post(FIVEFACTOR_USER_RESPONSE, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
-        }
+        } 
+      })
+      .then(response => {
+        console.log('Response from API:', response.data);
+        setLoading(false); 
       })
       .catch(error => {
         console.error('Error submitting user response for question', currentQuestion, ':', error);
+        setLoading(false);
       });
     } catch (error) {
       console.error('Error formatting user response for question', currentQuestion, ':', error);
+      setLoading(false);
     }
   };
+  
 
   return (
     <Box
@@ -334,6 +280,7 @@ const BigFivePersonalityTestQuestionsScreen = () => {
             />
 
             <CustomButton
+            disabled={loading}
               onClick={
                 questions.length === currentQuestion ? HandleSubmit : HandleNext
               }
