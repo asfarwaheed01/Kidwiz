@@ -382,7 +382,7 @@ const AddChildModal = ({
             input={<OutlinedInput/>}
             renderValue={(selected) => {
               if (selected.length === 0) {
-                return <p>Favourite Character</p>;
+                return <p style={{ color:colors.extra.grey1, fontSize: "16px", padding:0, margin:0 }}>Favourite Character</p>;
               }
               return selected.join(", ");
             }}
@@ -392,14 +392,20 @@ const AddChildModal = ({
               borderRadius: "12px",
               marginBottom: "10px",
               background: "#ECECEC",
-              padding: "0px 3px",
+              padding: "15px 10px",
               border: "none",
-              fontSize: "14px",
-              fontWeight:500
+              fontSize: "16px",
+              fontWeight: 500,
+              '& .MuiSelect-select': {
+                padding: '0px', // Adjust as needed
+              },
+              '& .MuiOutlinedInput-input': {
+                padding: '0 10px', // Adjust as needed
+              },
             }}
           >
             <MenuItem disabled value="">
-            <span style={{ color: "#a9a9a9", fontSize: "15px", fontStyle:"normal" }}>Favourite Character</span>
+            <span style={{ fontSize: "15px", fontStyle:"normal", padding:"0" }}>Favourite Character</span>
             </MenuItem>
             {names.map((name) => (
               <MenuItem key={name.label} value={name.value}>
