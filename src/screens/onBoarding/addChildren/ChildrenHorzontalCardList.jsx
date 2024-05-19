@@ -31,6 +31,19 @@ const ChildrenHorzontalCardList = ({wrapperStyleChildCard, addButtonStyleChildCa
     if(isLoading === false)
       getAllChilds();
   }, [isLoading])
+
+  const calculateAge = (birthday) => {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
   return (
     <Box>
          { childrenLoading 
@@ -69,6 +82,7 @@ const ChildrenHorzontalCardList = ({wrapperStyleChildCard, addButtonStyleChildCa
 
               (users_children.map((child,index)=>{
                 // console.log("child index -- >" + index);
+                const age = calculateAge(child.birthday);
                 return(
                   <Grid
                   item
@@ -78,7 +92,7 @@ const ChildrenHorzontalCardList = ({wrapperStyleChildCard, addButtonStyleChildCa
                   key={index}>
                   <ChildInfoCard
                     fullname={child.fullname}
-                    age={child.age}
+                    age={age}
                     gender={child.gender}
                     difficulty={child.difficulty}
                     profilePicture={  child.img }
